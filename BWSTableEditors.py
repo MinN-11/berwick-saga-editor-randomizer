@@ -51,10 +51,12 @@ def set_base(buffer, unit, stat, value):
         elif stat == "strength" or stat == "str":
             write_x_bits(buffer, offset + 23, 5, 3, to_five_bit_signed(value))
         elif stat == "speed" or stat == "spe" or stat == "spd":
+            write_x_bits(buffer, offset + 24, 5, 0, to_five_bit_signed(value))
+        elif stat == "luck" or stat == "luk":
             write_x_bits(buffer, offset + 24, 5, 5, to_five_bit_signed(value))
-        elif stat == "mind" or stat == "magic" or stat == "mag":
-            write_x_bits(buffer, offset + 25, 5, 2, to_five_bit_signed(value))
         elif stat == "defense" or stat == "def":
+            write_x_bits(buffer, offset + 25, 5, 2, to_five_bit_signed(value))
+        elif stat == "mind" or stat == "magic" or stat == "mag":
             write_x_bits(buffer, offset + 25, 5, 7, to_five_bit_signed(value))
         elif stat == "knife":
             write_x_bits(buffer, offset + 36, 10, 0, value * 10)

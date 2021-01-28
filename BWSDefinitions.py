@@ -72,15 +72,15 @@ MovementTypes = ["calvary", "lt-calvary", "flier", "knight", "armor", "infantry"
                  "war-priest", "lt-infantry", "priest", "--"]
 
 
-# jp
-UnitOffset = 0x0890E9f0
-UnitOffset2 = 0x08DD7830
-GrowthOffset = 0x0CB4520
-GrowthOffset2 = 0x08E907f4
-ClassOffset = 0x0CAE5CC
-ClassOffset2 = 0x08E8A8A0
-ItemOffset = 0x0CC0C04
-ItemOffset2 = 0x08E9CE08
+# japanese_original
+# UnitOffset = 0x0890E9f0
+# UnitOffset2 = 0x08DD7830
+# GrowthOffset = 0x0CB4520
+# GrowthOffset2 = 0x08E907f4
+# ClassOffset = 0x0CAE5CC
+# ClassOffset2 = 0x08E8A8A0
+# ItemOffset = 0x0CC0C04
+# ItemOffset2 = 0x08E9CE08
 
 
 # translation
