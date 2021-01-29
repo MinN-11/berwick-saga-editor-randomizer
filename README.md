@@ -1,4 +1,4 @@
-# berwick-saga-editor-randomizer
+# Berwick Saga Editor & Randomizer
 
 ## How to Patch a Berwick Saga Rom:
 
