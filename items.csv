@@ -386,7 +386,7 @@ KojinShield,0x181
 FujinShield,0x182
 RaijinShield,0x183
 AmaterasuShield,0x184
-Tsukuyomi Shield,0x185
+TsukuyomiShield,0x185
 ImpSoldierLShd+,0x186
 ImpOfficerLShd,0x187
 ImpKnightLShd,0x188
@@ -487,33 +487,33 @@ DUMMYItem,0x1E6
 Goldcoin,0x1E7
 Silvercoin,0x1E8
 DUMMYItem,0x1E9
-Bluecrystalring,0x1EA
-BundleofPejutagrass,0x1EB
-Barca'sPoems,0x1EC
-Hand-knittedhat,0x1ED
-ArrowheadofThunder,0x1EE
-Smallboxwithribbon,0x1EF
-Portraitofalady,0x1F0
-DemonofreturnStone,0x1F1
-ExtinctMagicStone,0x1F2
-Tulsaframedecoration,0x1F3
+BerylRing,0x1EA
+PajutaBundle,0x1EB
+BarkersPoetry,0x1EC
+KnitCap,0x1ED
+RaijinArrowheads,0x1EE
+DecorativeBox,0x1EF
+WomansPortrait,0x1F0
+Escapestone,0x1F1
+Vanishstone,0x1F2
+TulsaCirclet,0x1F3
 DUMMYItem,0x1F4
 DUMMYItem,0x1F5
 DUMMYItem,0x1F6
 DUMMYItem,0x1F7
 DUMMYItem,0x1F8
-Blueprintofthebridge,0x1F9
+BridgePlans,0x1F9
 Pickaxe,0x1FA
 DUMMYItem,0x1FB
 DUMMYItem,0x1FC
-Itemspare,0x1FD
-Maintenanceguide,0x1FE
-DUMMYItemCommanderII,0x1FF
-DUMMYItem,0x200
+ObfuscateManual,0x1FD
+ArmsthriftManual,0x1FE
+LeaderManual,0x1FF
+QualityHerbs,0x200
 DUMMYItem,0x201
 DUMMYItem,0x202
-Brokenlyre,0x203
-ItemspareBag,0x204
+BrokenLyre,0x203
+BagII,0x204
 ThinHorse,0x205
 PlainHorse,0x206
 SpryHorse,0x207
@@ -529,117 +529,117 @@ Tico,0x210
 DUMMYHorse,0x211
 DUMMYHorse,0x212
 DUMMYHorse,0x213
-Deadhorse,0x214
-Fragmentofthesun,0x215
-CelicaSteel,0x216
-Burningpowder,0x217
-Mithrilboard,0x218
-Reservematerial,0x219
-Valor'sEvilEye,0x21A
-Lycusskin,0x21B
+DeadHorse,0x214
+Sun Shard,0x215
+Zerika Steel,0x216
+Flame Dust,0x217
+Mithril Sheet,0x218
+DUMMYMaterial,0x219
+Eye of Balor,0x21A
+Wolf Pelt,0x21B
 Argentum,0x21C
-Reservematerial,0x21D
-ChinonSteel,0x21E
-GrasseSteel,0x21F
-Reservematerial,0x220
-Ironmeteorite,0x221
-AshTree,0x222
-NotosIron,0x223
-TiliaTree,0x224
-Reservematerial,0x225
-AmalgamMercury,0x226
+DUMMYMaterial,0x21D
+Sinon Steel,0x21E
+Gurras Steel,0x21F
+DUMMYMaterial,0x220
+Meteoric Iron,0x221
+Ash Wood,0x222
+Nottos Iron,0x223
+Linden Wood,0x224
+DUMMYMaterial,0x225
+Amalgam,0x226
 Obsidian,0x227
-PantasmaSteel,0x228
-Leveskin,0x229
-Antilobskin,0x22A
-Reservematerial,0x22B
-Fragmentofthunder,0x22C
-Yggdrasil,0x22D
-Fragmentofwinddust,0x22E
-Steer'sskin,0x22F
-ArcSapphire,0x230
-Mithrilpowder,0x231
-Tigrisskin,0x232
-BloodRuby,0x233
-SimrugFeather,0x234
-Schwein'sskin,0x235
-Reservematerial,0x236
-Lapislazuli,0x237
-HolyStoneofLight,0x238
-Soma'sdrug,0x239
-Pejutagrass,0x23A
-Reservematerial,0x23B
-Yewtree,0x23C
-Reservematerial,0x23D
-Reservematerial,0x23E
-AriadneThread,0x23F
-WundaAwinch,0x240
-Reservematerial,0x241
-Reservematerial,0x242
-SteelVine,0x243
-Reservematerial,0x244
-AncientFulu,0x245
-Slabbodyfluids,0x246
-Reservematerial,0x247
+Pantaz Steel,0x228
+Lion Pelt,0x229
+Antelope Pelt,0x22A
+DUMMYMaterial,0x22B
+Storm Shard,0x22C
+Jugud Wood,0x22D
+Gale Shard,0x22E
+Bull Pelt,0x22F
+Sapphire,0x230
+Mithril Dust,0x231
+Tiger Pelt,0x232
+Garnet,0x233
+Simurgh Down,0x234
+Boar Pelt,0x235
+DUMMYMaterial,0x236
+Lapis Lazuli,0x237
+Lightstone,0x238
+Soma,0x239
+Pajuta Grass,0x23A
+DUMMYMaterial,0x23B
+Yew Wood,0x23C
+DUMMYMaterial,0x23D
+DUMMYMaterial,0x23E
+Ariadne Thread,0x23F
+Winch,0x240
+DUMMYMaterial,0x241
+DUMMYMaterial,0x242
+Steel Wire,0x243
+DUMMYMaterial,0x244
+Ancient Amulet,0x245
+Surab Fluid,0x246
+DUMMYMaterial,0x247
 Platinum,0x248
 Opal,0x249
-RedRuby,0x24A
-Perdangolddust,0x24B
+Ruby,0x24A
+Gold Dust,0x24B
 Amber,0x24C
-DragonPearl,0x24D
-Reservematerial,0x24E
-Reservematerial,0x24F
-Reservematerial,0x250
-Reservematerial,0x251
-Reservematerial,0x252
-Reservematerial,0x253
-Reservematerial,0x254
-Reservematerial,0x255
-Reservematerial,0x256
-Reservematerial,0x257
-Reservematerial,0x258
-Reservematerial,0x259
-Reservematerial,0x25A
-Reservematerial,0x25B
-Reservematerial,0x25C
-Reservematerial,0x25D
-Reservematerial,0x25E
-Reservematerial,0x25F
-Reservematerial,0x260
-Reservematerial,0x261
-Reservematerial,0x262
-Reservematerial,0x263
-Captivehorse,0x264
-ThinHorse2,0x265
-PlainHorse2,0x266
-SpryHorse2,0x267
-ToughHorse2,0x268
-StrongHorse2,0x269
-IsisHakuba2,0x26A
-SinonStallion2,0x26B
-RigaBlackHorse2,0x26C
-RigaSuruma2,0x26D
-MorachiaWarHorse2,0x26E
-IsisSuruma2,0x26F
-Foal2,0x270
-Horsereserve,0x271
-Horsereserve,0x272
-Horsereserve,0x273
-Horsereserve,0x274
+Wyvern Pearl,0x24D
+DUMMYMaterial,0x24E
+DUMMYMaterial,0x24F
+DUMMYMaterial,0x250
+DUMMYMaterial,0x251
+DUMMYMaterial,0x252
+DUMMYMaterial,0x253
+DUMMYMaterial,0x254
+DUMMYMaterial,0x255
+DUMMYMaterial,0x256
+DUMMYMaterial,0x257
+DUMMYMaterial,0x258
+DUMMYMaterial,0x259
+DUMMYMaterial,0x25A
+DUMMYMaterial,0x25B
+DUMMYMaterial,0x25C
+DUMMYMaterial,0x25D
+DUMMYMaterial,0x25E
+DUMMYMaterial,0x25F
+DUMMYMaterial,0x260
+DUMMYMaterial,0x261
+DUMMYMaterial,0x262
+DUMMYMaterial,0x263
+StolenHorse,0x264
+ThinHorseMap,0x265
+PlainHorseMap,0x266
+SpryHorseMap,0x267
+ToughHorseMap,0x268
+StrongHorseMap,0x269
+IshsStallionMap,0x26A
+SinonStallionMap,0x26B
+LigaDestrierMap,0x26C
+LigaCourserMap,0x26D
+MorachHorseMap,0x26E
+IshsCourserMap,0x26F
+Foal,0x270
+DUMMYHorse,0x271
+DUMMYHorse,0x272
+DUMMYHorse,0x273
+DUMMYHorse,0x274
 Food,0x275
 DUMMYItem,0x276
 DUMMYItem,0x277
 Sacrifice,0x278
-Pow,0x279
-Keybetweenthethrones,0x27A
+Prisoner,0x279
+ThroneKey,0x27A
 PrisonKey,0x27B
 DUMMYItem,0x27C
 DUMMYItem,0x27D
 DUMMYItem,0x27E
 DUMMYItem,0x27F
 DUMMYItem,0x280
-Geniebracelet,0x281
-SleepLiar,0x282
+DjinnRing,0x281
+LullabyLyre,0x282
 DUMMYItem,0x283
 DUMMYItem,0x284
 DUMMYItem,0x285
