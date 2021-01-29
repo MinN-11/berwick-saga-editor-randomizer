@@ -46,8 +46,8 @@ Fencer,0x30
 General,0x31
 WyvernKnight_R,0x32
 WyvernKnight,0x33
-WyvernKnight2_R,0x34
-WyvernKnight2,0x35
+WyvernKnightLarentia_R,0x34
+WyvernKnightLarentia,0x35
 WyvernLord_R,0x36
 WyvernLord,0x37
 Axeman,0x3C
@@ -74,7 +74,7 @@ Highlander,0x50
 Hero,0x51
 Ranger,0x52
 Sniper,0x53
-Myrmidon_F,0x54
+Myrmidon,0x54
 Swordmaster,0x55
 Warrior,0x56
 Thief_M,0x57
@@ -109,8 +109,8 @@ FlameFencer,0x79
 WarMonk,0x7A
 ShiningKnight_R,0x7D
 ShiningKnight,0x7E
-ShiningKnight2_R,0x7F
-ShiningKnight2,0x80
+ShiningKnightParamythis_R,0x7F
+ShiningKnightParamythis,0x80
 RazeMonk,0x81
 RazePriest,0x82
 RazeBishop,0x83

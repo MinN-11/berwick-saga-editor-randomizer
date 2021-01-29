@@ -54,7 +54,7 @@ ItemEffectRates = [
     "block-fire-damage", "--", "block-thunder-damage", "--", "disarm-rate", "injure-rate", "--", "block-holy-damage"
 ]
 
-Durability = ["no", "a", "b", "c", "d", "e", "f"]
+Durability = ["s", "a", "b", "c", "d", "e", "f"]
 
 WeaponTypes = ["knife", "sword", "blade", "mace", "spear", "lance", "fork", "axe", "bow", "crossbow", "ballista",
                "fire", "thunder", "wind", "holy", "dark", "holy_heal", "dark_heal", "sshield", "mshield", "lshield",

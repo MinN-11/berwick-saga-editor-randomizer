@@ -2,11 +2,16 @@ import sys
 from BWSTableEditors import *
 
 
-def try_eval(str):
+# returns value and modify_mode
+def try_eval(s):
     try:
-        return eval(str)
-    except:
-        return str
+        if s == "max":
+            return 101, 0
+        sgn = 1 if s.startswith("+") else -1 if s.startswith("-") else 2 if s.startswith("*") else 0
+        val = abs(int(s, 0))
+        return val, sgn
+    except ValueError:
+        return s, 0
 
 
 def help():
@@ -19,7 +24,7 @@ def help():
     print("set/unset    unit_name learned skill_name #level")
     print("set/unset    unit bracket tight/loose/no")
     print("set/unset    unit item #slot item_name max/#uses [lock] [drop]")
-    print("                 WARNING: max only works on weapons with colored durability, aka 101.")
+    print("                 WARNING: max just means 101, don't use with uses")
     print("                 [lock] is mercenary lock, [drop] is drop item.")
     # print("set          unit bag  #slot item_name max/#uses  [lock] [drop]")
     # print("                 WARNING: This does not allocate new space, can only modify existing items.")
@@ -44,22 +49,11 @@ def list_stuff():
     print()
 
 
-def main():
-    if len(sys.argv) < 2:
-        pass
-    elif sys.argv[1] == "help":
-        help()
-    elif sys.argv[1] == "list":
-        list_stuff()
-    elif len(sys.argv) < 4:
-        print("python3 init.py DATA3.DAT OUTPUT YOUR_SCRIPT")
-    if len(sys.argv) < 4:
-        quit()
-    _, data, output, script = sys.argv[:4]
+def parse_script(data, output, script):
     with open(data, "rb") as data_file:
         buffer = bytearray(data_file.read())
     with open(script, "r") as script_file:
-        for line in script_file:
+        for index, line in enumerate(script_file):
             try:
                 commands = line.strip().lower().split(" ")
                 if len(commands) <= 1:
@@ -76,8 +70,6 @@ def main():
                         elif commands[2] == "skill":
                             set_skill(buffer, target, commands[3], 1)
                         elif commands[2] == "item":
-                            if commands[5] == "max":
-                                commands[5] = "101"
                             set_item(buffer, target, try_eval(commands[3]), ItemToIndex[commands[4]], try_eval(commands[5]),
                                      "lock" in commands, "drop" in commands)
                         elif commands[2] == "bag":
@@ -86,9 +78,11 @@ def main():
                         elif commands[2] == "support":
                             set_support(buffer, target, try_eval(commands[3]), commands[4], try_eval(commands[5]))
                         elif commands[2] == "bracket":
-                            set_growth(buffer, target, "bracket", commands[3])
+                            set_growth(buffer, target, "bracket", try_eval(commands[3]))
                         elif commands[2] == "learned":
                             set_learned(buffer, target, try_eval(commands[3]), commands[4], try_eval(commands[5]))
+                        else:
+                            raise UnknownCommandError
                     elif commands[0] == "unset":
                         if commands[2] == "skill":
                             set_skill(buffer, target, commands[3], 0)
@@ -98,6 +92,10 @@ def main():
                             set_bag_item(buffer, target, try_eval(commands[3]), 0, 0, False, False)
                         elif commands[2] == "learned":
                             set_learned(buffer, target, try_eval(commands[3]), 255, 0)
+                        else:
+                            raise UnknownCommandError
+                    else:
+                        raise UnknownCommandError
                 elif target in ClassToIndex:
                     if commands[0] == "set":
                         if commands[2] == "base":
@@ -106,11 +104,27 @@ def main():
                             set_class_growth(buffer, target, commands[3], try_eval(commands[4]))
                         elif commands[2] == "skill":
                             set_class_skill(buffer, target, commands[3], 1)
-                        elif commands[2] == "attribute":
-                            set_class_attribute(buffer, target, commands[3], commands[4])
+                        elif commands[2] == "cap":
+                            set_class_caps(buffer, target, commands[3], 1)
+                        elif commands[2] == "movement_type":
+                            set_class_attribute(buffer, target, "movement", commands[3])
+                        elif commands[2] == "mount_type":
+                            set_class_attribute(buffer, target, "mount", commands[3])
+                        elif commands[2] == "class_type":
+                            set_class_attribute(buffer, target, "type", commands[3])
+                        elif commands[2] == "weapon":
+                            pass
+                        else:
+                            raise UnknownCommandError
                     elif commands[0] == "unset":
                         if commands[2] == "skill":
                             set_class_skill(buffer, target, commands[3], 0)
+                        elif commands[2] == "weapon":
+                            pass
+                        else:
+                            raise UnknownCommandError
+                    else:
+                        raise UnknownCommandError
                 elif target in ItemToIndex:
                     if commands[0] == "set":
                         if commands[2] == "stat":
@@ -126,11 +140,38 @@ def main():
                                 set_item_effect(buffer, target, commands[3], 0)
                             else:
                                 set_item_effect_value(buffer, target, 0, 0)
+                    else:
+                        raise UnknownCommandError
+                else:
+                    raise UnknownItemError
             except IndexError:
-                print("Error parsing line {}".format(line))
+                print("Error parsing line #{}: {}".format(index, line), end="")
+            except UnknownCommandError:
+                print("Error parsing line #{}: {}".format(index, line), end="")
+            except UnknownAttributeError:
+                print("Unknown attribute in line #{}: {}".format(index, line), end="")
+            except KeyError:
+                print("Unknown attribute in line #{}: {}".format(index, line), end="")
+            except UnknownItemError:
+                print("Unknown item in line #{}: {}".format(index, line), end="")
 
     with open(output, "wb") as output_file:
         output_file.write(buffer)
+
+
+def main():
+    if len(sys.argv) < 2:
+        pass
+    elif sys.argv[1] == "help":
+        help()
+    elif sys.argv[1] == "list":
+        list_stuff()
+    elif len(sys.argv) < 4:
+        print("python3 init.py DATA3.DAT OUTPUT YOUR_SCRIPT")
+    if len(sys.argv) < 4:
+        quit()
+    _, data, output, script = sys.argv[:4]
+    parse_script(data, output, script)
 
 
 if __name__ == '__main__':
