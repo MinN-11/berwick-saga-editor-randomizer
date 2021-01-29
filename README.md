@@ -4,7 +4,7 @@
 
 1. Mount or unzip a translated Berwick Saga rom, extract the files, DATA3.DAT is what we are editing here.
 
-2. Run python3 BWSEditor.py DATA3.DAT OUTPUT.DAT YOUR_SCRIPT.txt
+2. Run ```python3 BWSEditor.py DATA3.DAT OUTPUT.DAT YOUR_SCRIPT.txt``` on your terminal.
 
 3. Replace the original DATA3.DAT with the output
 
