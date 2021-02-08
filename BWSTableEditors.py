@@ -49,13 +49,15 @@ def read_x_bits(buffer, offset, x_bits, bit_offset):
     return value
 
 
-def modify_x_bits(buffer, offset, x_bits, bit_offset, value, modifier):
+def modify_x_bits(buffer, offset, x_bits, bit_offset, value, modifier, ma=65536, mi=0):
     if modifier == 1:
         value = read_x_bits(buffer, offset, x_bits, bit_offset) + value
     elif modifier == -1:
         value = read_x_bits(buffer, offset, x_bits, bit_offset) - value
     elif modifier == 2:
         value = int(read_x_bits(buffer, offset, x_bits, bit_offset) * value)
+    value = 0 if value < 0 else (1 << x_bits) - 1 if value >= 1 << x_bits else value
+    value = max(mi, min(ma, value))
     write_x_bits(buffer, offset, x_bits, bit_offset, value)
 
 
@@ -174,8 +176,8 @@ def set_item(buffer, unit, slot, item, durability, is_locked, is_dropped):
     for offset in offsets:
         write_x_bits(buffer, offset, 16, 0, item)
         write_x_bits(buffer, offset + 2, 8, 4, durability)
-        write_x_bits(buffer, offset + 4, 1, 3, int(is_locked))
-        write_x_bits(buffer, offset + 3, 1, 8, int(is_dropped))
+        write_x_bits(buffer, offset + 4, 1, 2, int(is_locked))
+        write_x_bits(buffer, offset + 3, 1, 7, int(is_dropped))
 
 
 def set_bag_item(buffer, unit, slot, item, durability, is_locked, is_dropped):
@@ -223,7 +225,7 @@ def set_item_stat(buffer, item, stat, value):
         elif stat == "level":
             modify_x_bits(buffer, offset + 6, 6, 6, value, modifier)
         elif stat == "price" or stat == "cost":
-            modify_x_bits(buffer, offset + 8, 16, 0, value, modifier)
+            modify_x_bits(buffer, offset + 8, 16, 0, value, modifier, mi=100)  # for the randomizer
         elif stat == "defense" or stat == "def":
             modify_x_bits(buffer, offset + 12, 6, 0, to_six_bit_signed(value), modifier)
         elif stat == "speed" or stat == "spe" or stat == "spd":
@@ -249,7 +251,7 @@ def set_item_stat(buffer, item, stat, value):
         elif stat == "holy_res":
             modify_x_bits(buffer, offset + 20, 6, 6, to_six_bit_signed(value), modifier)
         elif stat == "durability":
-            modify_x_bits(buffer, offset + 21, 3, 4, Durability.index(value), modifier)
+            modify_x_bits(buffer, offset + 21, 3, 4, Durability.index(value), -modifier, ma=6)
         elif stat == "crit_avoid_penalty":
             modify_x_bits(buffer, offset + 21, 8, 7, to_eight_bit_signed(value), modifier)
         else:
