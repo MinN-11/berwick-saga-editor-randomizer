@@ -1,6 +1,14 @@
 from BWSDefinitions import *
 
 
+LanguageUsed = 1  # 0 is japanese, 1 is translation patch, globals are bad I know
+
+
+def SetLanguageUsed(v):
+    global LanguageUsed
+    LanguageUsed = v
+
+
 class UnknownAttributeError(Exception):
     pass
 
@@ -43,13 +51,13 @@ def write_x_bits(buffer, offset, x_bits, bit_offset, value):
 
 
 def read_x_bits(buffer, offset, x_bits, bit_offset):
-    value = ((0xFF << bit_offset) & 0xFF & buffer[offset]) >> bit_offset
+    value = ((0xFF >> (8 - x_bits) << bit_offset) & 0xFF & buffer[offset]) >> bit_offset
     if bit_offset + x_bits > 8:
-        value += (buffer[offset + 1] & (0xFF >> (8 - bit_offset))) << (8 - bit_offset)
+        value += (buffer[offset + 1] & ((1 << bit_offset + x_bits - 8) - 1)) << (8 - bit_offset)
     return value
 
 
-def modify_x_bits(buffer, offset, x_bits, bit_offset, value, modifier, ma=65536, mi=0):
+def modify_x_bits(buffer, offset, x_bits, bit_offset, value, modifier, ma=65535, mi=0):
     if modifier == 1:
         value = read_x_bits(buffer, offset, x_bits, bit_offset) + value
     elif modifier == -1:
@@ -63,7 +71,7 @@ def modify_x_bits(buffer, offset, x_bits, bit_offset, value, modifier, ma=65536,
 
 def set_base(buffer, unit, stat, value):
     value, modifier = value
-    offsets = UnitOffset + UnitToOffset[unit], UnitOffset2 + UnitToOffset[unit]
+    offsets = UnitOffsets[LanguageUsed][0] + UnitToOffset[unit], UnitOffsets[LanguageUsed][1] + UnitToOffset[unit]
     for offset in offsets:
         if stat == "level" or stat == "lv" or stat == "rank":
             modify_x_bits(buffer, offset + 20, 6, 0, value, modifier)
@@ -107,19 +115,19 @@ def set_base(buffer, unit, stat, value):
             modify_x_bits(buffer, offset + 52, 10, 0, value * 10, modifier)
         elif stat == "lshield":
             modify_x_bits(buffer, offset + 53, 10, 2, value * 10, modifier)
-        elif stat == "mainhand" or stat == "weapon":
-            modify_x_bits(buffer, offset + 26, 4, 4, value, modifier)
-        elif stat == "offhand" or stat == "shield" or stat == "accessory":
-            modify_x_bits(buffer, offset + 27, 4, 0, value, modifier)
+        elif stat == "offhand":
+            modify_x_bits(buffer, offset + 26, 4, 4, value + 1, modifier)  # 0 is unequipped
+        elif stat == "mainhand":
+            modify_x_bits(buffer, offset + 27, 4, 0, value + 1, modifier)  # 0 is unequipped
         else:
             raise UnknownAttributeError
 
 
 def set_growth(buffer, unit, stat, value):
     value, modifier = value
-    offsets = GrowthOffset + (UnitToIndex[unit] - 1) * 32, GrowthOffset2 + (UnitToIndex[unit] - 1) * 32
+    offsets = GrowthOffsets[LanguageUsed][0] + (UnitToIndex[unit] - 1) * 32, GrowthOffsets[LanguageUsed][1] + (UnitToIndex[unit] - 1) * 32
     if stat == "bracket" and not value.isdigit():
-        value = {"no": 1, "loose": 2, "strict": 3}[value]
+        value = {"no": 1, "loose": 2, "tight": 3}[value]
     for offset in offsets:
         if stat == "hp":
             modify_x_bits(buffer, offset, 7, 0, value, modifier)
@@ -163,16 +171,16 @@ def set_growth(buffer, unit, stat, value):
 
 def set_skill(buffer, unit, skll_name, value):
     index = Skills.index(skll_name)
-    offset = UnitOffset + UnitToOffset[unit]
+    offset = UnitOffsets[LanguageUsed][0] + UnitToOffset[unit]
     write_x_bits(buffer, offset + 56 + index // 8, 1, index & 0x7, value)
-    offset = UnitOffset2 + UnitToOffset[unit]
+    offset = UnitOffsets[LanguageUsed][1] + UnitToOffset[unit]
     write_x_bits(buffer, offset + 56 + index // 8, 1, index & 0x7, value)
 
 
 def set_item(buffer, unit, slot, item, durability, is_locked, is_dropped):
     slot, _ = slot
     durability, _ = durability
-    offsets = UnitOffset + UnitToOffset[unit] + 0xBC + slot * 8, UnitOffset2 + UnitToOffset[unit] + 0xBC + slot * 8
+    offsets = UnitOffsets[LanguageUsed][0] + UnitToOffset[unit] + 0xBC + slot * 8, UnitOffsets[LanguageUsed][1] + UnitToOffset[unit] + 0xBC + slot * 8
     for offset in offsets:
         write_x_bits(buffer, offset, 16, 0, item)
         write_x_bits(buffer, offset + 2, 8, 4, durability)
@@ -181,19 +189,19 @@ def set_item(buffer, unit, slot, item, durability, is_locked, is_dropped):
 
 
 def set_bag_item(buffer, unit, slot, item, durability, is_locked, is_dropped):
-    slot, _ = slot
-    durability, _ = durability
+    pass
     # TODO: implement this
 
 
 def set_learned(buffer, unit, slot, skill, level):
     slot, _ = slot
     level, modifier = level
-    skill = Skills2.index(skill)
-    offset = GrowthOffset + (UnitToIndex[unit] - 1) * 32
+    if isinstance(skill, str):
+        skill = Skills2.index(skill)
+    offset = GrowthOffsets[LanguageUsed][0] + (UnitToIndex[unit] - 1) * 32
     modify_x_bits(buffer, offset + 20 + slot, 8, 0, level, modifier)
     write_x_bits(buffer, offset + 26 + slot, 8, 0, skill)
-    offset = GrowthOffset2 + (UnitToIndex[unit] - 1) * 32
+    offset = GrowthOffsets[LanguageUsed][1] + (UnitToIndex[unit] - 1) * 32
     modify_x_bits(buffer, offset + 20 + slot, 8, 0, level, modifier)
     write_x_bits(buffer, offset + 26 + slot, 8, 0, skill)
 
@@ -204,7 +212,7 @@ def set_support(buffer, unit, slot, source, amount):
 
 def set_item_stat(buffer, item, stat, value):
     value, modifier = value
-    offsets = ItemOffset + (ItemToIndex[item] - 1) * 56, ItemOffset2 + (ItemToIndex[item] - 1) * 56
+    offsets = ItemOffsets[LanguageUsed][0] + (ItemToIndex[item] - 1) * 56, ItemOffsets[LanguageUsed][1] + (ItemToIndex[item] - 1) * 56
     for offset in offsets:
         if stat == "might":
             modify_x_bits(buffer, offset, 6, 5, value, modifier)
@@ -251,7 +259,9 @@ def set_item_stat(buffer, item, stat, value):
         elif stat == "holy_res":
             modify_x_bits(buffer, offset + 20, 6, 6, to_six_bit_signed(value), modifier)
         elif stat == "durability":
-            modify_x_bits(buffer, offset + 21, 3, 4, Durability.index(value), -modifier, ma=6)
+            if isinstance(value, str):
+                value = Durability.index(value)
+            modify_x_bits(buffer, offset + 21, 3, 4, value, -modifier, ma=6)
         elif stat == "crit_avoid_penalty":
             modify_x_bits(buffer, offset + 21, 8, 7, to_eight_bit_signed(value), modifier)
         else:
@@ -260,15 +270,15 @@ def set_item_stat(buffer, item, stat, value):
 
 def set_item_effect(buffer, item, effect, value):
     eff_id = ItemEffects.index(effect)
-    offset = ItemOffset + (ItemToIndex[item] - 1) * 56
+    offset = ItemOffsets[LanguageUsed][0] + (ItemToIndex[item] - 1) * 56
     write_x_bits(buffer, offset + 28 + eff_id//8, 1, eff_id & 0x7, value)
-    offset = ItemOffset2 + (ItemToIndex[item] - 1) * 56
+    offset = ItemOffsets[LanguageUsed][1] + (ItemToIndex[item] - 1) * 56
     write_x_bits(buffer, offset + 28 + eff_id // 8, 1, eff_id & 0x7, value)
 
 
 def set_item_effect_value(buffer, item, effect, value):
     value, modifier = value
-    offsets = ItemOffset + (ItemToIndex[item] - 1) * 56, ItemOffset2 + (ItemToIndex[item] - 1) * 56
+    offsets = ItemOffsets[LanguageUsed][0] + (ItemToIndex[item] - 1) * 56, ItemOffsets[LanguageUsed][1] + (ItemToIndex[item] - 1) * 56
     eff_id = ItemEffectRates.index(effect)
     for offset in offsets:
         if effect == 0:
@@ -281,7 +291,7 @@ def set_item_effect_value(buffer, item, effect, value):
 
 def set_class_base(buffer, cls, stat, value):
     value, modifier = value
-    offsets = ClassOffset + (ClassToIndex[cls] - 1) * 100, ClassOffset2 + (ClassToIndex[cls] - 1) * 100
+    offsets = ClassOffsets[LanguageUsed][0] + (ClassToIndex[cls] - 1) * 100, ClassOffsets[LanguageUsed][1] + (ClassToIndex[cls] - 1) * 100
     for offset in offsets:
         if stat == "hp":
             modify_x_bits(buffer, offset, 5, 0, value, modifier)
@@ -303,7 +313,7 @@ def set_class_base(buffer, cls, stat, value):
 
 def set_class_growth(buffer, cls, stat, value):
     value, modifier = value
-    offsets = ClassOffset + (ClassToIndex[cls] - 1) * 100, ClassOffset2 + (ClassToIndex[cls] - 1) * 100
+    offsets = ClassOffsets[LanguageUsed][0] + (ClassToIndex[cls] - 1) * 100, ClassOffsets[LanguageUsed][1] + (ClassToIndex[cls] - 1) * 100
     for offset in offsets:
         if stat == "hp":
             modify_x_bits(buffer, offset + 24, 7, 0, value, modifier)
@@ -319,7 +329,7 @@ def set_class_growth(buffer, cls, stat, value):
 
 def set_class_caps(buffer, cls, stat, value):
     value, modifier = value
-    offsets = ClassOffset + (ClassToIndex[cls] - 1) * 100, ClassOffset2 + (ClassToIndex[cls] - 1) * 100
+    offsets = ClassOffsets[LanguageUsed][0] + (ClassToIndex[cls] - 1) * 100, ClassOffsets[LanguageUsed][1] + (ClassToIndex[cls] - 1) * 100
     for offset in offsets:
         if stat == "knife":
             modify_x_bits(buffer, offset + 28, 6, 7, value, modifier)
@@ -354,7 +364,7 @@ def set_class_caps(buffer, cls, stat, value):
 
 
 def set_class_attribute(buffer, cls, attribute, value):
-    offsets = ClassOffset + (ClassToIndex[cls] - 1) * 100, ClassOffset2 + (ClassToIndex[cls] - 1) * 100
+    offsets = ClassOffsets[LanguageUsed][0] + (ClassToIndex[cls] - 1) * 100, ClassOffsets[LanguageUsed][1] + (ClassToIndex[cls] - 1) * 100
     value = MovementTypes.index(value)
     for offset in offsets:
         if attribute == "type":
@@ -369,7 +379,7 @@ def set_class_attribute(buffer, cls, attribute, value):
 
 def set_class_skill(buffer, cls, stat, value):
     wid = Skills.index(stat)
-    offset = ClassOffset + (ClassToIndex[cls] - 1) * 100
+    offset = ClassOffsets[LanguageUsed][0] + (ClassToIndex[cls] - 1) * 100
     write_x_bits(buffer, offset + 12 + wid//8, 1, wid & 0x7, value)
-    offset = ClassOffset2 + (ClassToIndex[cls] - 1) * 100
+    offset = ClassOffsets[LanguageUsed][1] + (ClassToIndex[cls] - 1) * 100
     write_x_bits(buffer, offset + 12 + wid // 8, 1, wid & 0x7, value)

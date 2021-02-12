@@ -529,3 +529,15 @@ EnemySkillSet1 = [
 EnemySkillSet2 = ["counter", "adept", "vengeful", "desperation", "pursuit", "critical"]
 
 EnemySkillSet3 = ["swordbane", "spearbane", "axebane", "arrowbane", "magicbane"]
+
+LightFootUnits = ["czene", "kramer", "dean", "faye", "sylvis", "thaddy", "esteban", "faramir", "volo", "sherpa", "axel"]
+MagicUnits = ["izerna", "aegina", "enid", "owen", "saphira", "lynette",  "perceval"]
+ThiefUnits = ["czene", "thaddy"]
+PhysicalUnits = ["reese", "ward", "elbert", "christine", "adel", "leon", "sherlock", "alvina", "ruby", "arthur",
+                 "clifford", "larentia", "daoud", "marcel", "kramer", "dean", "faye", "sylvis", "thaddy",
+                 "esteban", "faramir", "volo", "sherpa", "axel", "burroughs", "derrick"]
+
+LightUnitGrowth = {"strength": 45, "defense": 18, "speed": 45, "hp": 50, "magic": 25}
+MagicUnitGrowth = {"strength": 25, "defense": 12, "speed": 40, "hp": 35, "magic": 40}
+ThiefGrowth = {"strength": 25, "defense": 12, "speed": 40, "hp": 35, "magic": 25}
+HeavyUnitGrowth = {"strength": 50, "defense": 24, "speed": 40, "hp": 50, "magic": 20}

@@ -7,7 +7,8 @@ import os
 import threading
 import platform
 import subprocess
-import ISOEditor
+import BWSISOEditor
+from BWSTableEditors import SetLanguageUsed, LanguageUsed
 
 
 def open_file(path):
@@ -69,6 +70,13 @@ def main():
     tar_ent.pack(side=tk.LEFT)
     tar_btn.pack(side=tk.LEFT)
 
+    use_translation = tk.BooleanVar(value=LanguageUsed == 1)
+
+    def SetTranslationPatch():
+        SetLanguageUsed(1) if use_translation.get() else SetLanguageUsed(0)
+
+    tk.Checkbutton(main_frame, font=ui_font, text="Use Translation Patch", command=SetTranslationPatch, variable=use_translation).pack()
+
     script_box = tk.Text(main_frame, font=script_font, highlightbackground="black", highlightthickness=2)
     script_box.pack(padx=10, pady=10)
 
@@ -76,7 +84,7 @@ def main():
         messagebox.showinfo("Message", "Patching Started!")
         try:
             lock_window()
-            ISOEditor.ModifyData3(source_rom.get(), target_rom.get(), script_box.get("1.0", "end"))
+            BWSISOEditor.ModifyData3(source_rom.get(), target_rom.get(), script_box.get("1.0", "end"))
             messagebox.showinfo("Success!", "Successfully patched!")
             open_file(os.path.dirname(target_rom.get()))
         except Exception:

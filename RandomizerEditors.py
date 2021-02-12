@@ -4,6 +4,17 @@ from BWSDefinitions import *
 from RandomizerDefinitions import *
 
 
+def splitvalue(value, slices):
+    n = sorted([random.randint(0, value) for i in range(slices - 1)])
+    last = 0
+    result = []
+    for i in n:
+        result.append(i - last)
+        last = i
+    result.append(value - last)
+    return result
+
+
 def sign_str(v):
     return "+" if v >= 0 else "-"
 
@@ -39,7 +50,7 @@ def balanced_triangular_variance(max_dec, max_inc, mode, bias=5):
         return int(random.triangular(0, max_inc + 1, fit_mid(mode, 0, max_inc)))
 
 
-def include_file(exotic_weapon_buff, nerf_ballistae, nerf_lance_knights, four_move_priests, four_move_marcel, four_move_derrick, hard_mode, lunatic_mode, enemy_stats_patch, enemy_stat_buff, anti_softlock_patch, robust_patch):
+def include_file(exotic_weapon_buff, nerf_ballistae, nerf_lance_knights, four_move_priests, four_move_marcel, four_move_derrick, hard_mode, lunatic_mode, enemy_stats_patch, enemy_stat_buff, vulneries_patch, robust_patch):
     buffer = ""
     if exotic_weapon_buff:
         buffer += "import exotic_weapon_uses\n"
@@ -49,20 +60,20 @@ def include_file(exotic_weapon_buff, nerf_ballistae, nerf_lance_knights, four_mo
         buffer += "import nerf_lance_knights\n"
     if four_move_priests:
         buffer += "import four_move_priests\n"
-    if four_move_marcel:
-        buffer += "unset marcel skill slowstart\n"
-    if four_move_derrick:
-        buffer += "set derrick skill celerity\n"
     if hard_mode:
         buffer += "import hard\n"
     if lunatic_mode:
         buffer += "import lunatic\n"
     if enemy_stats_patch:
-        buffer += "import enemy+{}\n".format(enemy_stat_buff)
-    if anti_softlock_patch:
-        buffer += "import anti_softlock\n"
+        buffer += "import enemy+{}\n".format(fit(enemy_stat_buff, 1, 5))
+    if vulneries_patch:
+        buffer += "import vulneries\n"
     if robust_patch:
         buffer += "import robust_players\n"
+    if four_move_marcel:
+        buffer += "unset marcel skill slowstart\n"
+    if four_move_derrick:
+        buffer += "set derrick skill celerity\n"
     return buffer
 
 
@@ -70,7 +81,8 @@ def base_randomization(randomize_bases, randomize_wlv_bases, stat_randomizer, le
                        retrofit_stats, stat_max, stat_min, balanced_bases, sherpa_bases, wlv_randomizer, wlv_variance, buff_wlv):
     stats = ["strength", "magic", "defense", "speed", "hp"]
     buffer = ""
-    shuffled_levels = random.shuffle([BaseLevel[i] for i in BaseLevel])
+    shuffled_levels = [BaseLevel[i] for i in BaseLevel]
+    random.shuffle(shuffled_levels)
     for index, unit in enumerate(UnitToOffset):
         orig_level = BaseLevel[unit]
         level = orig_level
@@ -98,6 +110,12 @@ def base_randomization(randomize_bases, randomize_wlv_bases, stat_randomizer, le
                 delta_stats += random_bonus
                 if autolevel + random_bonus != 0:
                     buffer += "set {} base {} {}{:.0f}\n".format(unit, stat, sign_str(autolevel + random_bonus), abs(autolevel + random_bonus))
+                    if unit == "reese" and autolevel + random_bonus < 0:  # reese has 0 personal bases, can't really account for others
+                        buffer += "set Lord_R base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
+                        buffer += "set Lord base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
+                        buffer += "set KnightLord_R base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
+                        buffer += "set KnightLord base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
+
         if retrofit_stats:
             internal_level += delta_stats * StatToLevelConstant
             buffer += "set {} base level {:.0f}\n".format(unit, internal_level)
@@ -115,15 +133,58 @@ def base_randomization(randomize_bases, randomize_wlv_bases, stat_randomizer, le
                             base = fit(int(base * 1.5 + 2), 5, 10)
                         buffer += "set {} base {} {:.0f}\n".format(unit, weapon, fit(base, 0, 40))
             elif wlv_randomizer == 1:
-                sum_wlv = sum([WeaponLevels[unit][w] for w in WeaponLevels[unit]])
-                pass
+                sum_wlv = sum([WeaponLevels[unit][w][0] for w in WeaponLevels[unit]])
+                weapons = [w for w in WeaponLevels[unit] if WeaponLevels[unit][w][0] != 0]
+                bases = splitvalue(sum_wlv, len(weapons))
+                for i, weapon in enumerate(weapons):
+                    base = fit(bases[i] + autolevel_with_growth(internal_level - orig_level, 50), 0, 50)
+                    if buff_wlv and base < 10:
+                        base = fit(int(base * 1.5 + 2), 5, 10)
+                    buffer += "set {} base {} {:.0f}\n".format(unit, weapon, base)
             else:
-                pass
+                weapons = [w for w in WeaponLevels[unit] if WeaponLevels[unit][w][0] != 0]
+                bases = [WeaponLevels[unit][w][0] for w in WeaponLevels[unit] if WeaponLevels[unit][w][0] != 0]
+                random.shuffle(bases)
+                for i, weapon in enumerate(weapons):
+                    random_bonus = balanced_linear_variance(wlv_variance, wlv_variance)
+                    base = fit(bases[i] + random_bonus + autolevel_with_growth(internal_level - orig_level, 50), 0, 40)
+                    if buff_wlv and base < 10:
+                        base = fit(int(base * 1.5 + 2), 5, 10)
+                    buffer += "set {} base {} {:.0f}\n".format(unit, weapon, base)
     return buffer
 
 
 def base_adjustment(foot_unit_def_up, magic_unit_bulk_up, magic_unit_speed_up, thief_str_up, mag_is_everything):
-    pass
+    buffer = ""
+    if foot_unit_def_up:
+        for unit in LightFootUnits:
+            n = random.randint(-3, 3)
+            if n > 0:
+                buffer += "set {} base defense +{}\n".format(unit, n)
+    if magic_unit_bulk_up:
+        for unit in MagicUnits:
+            n = random.randint(-3, 3)
+            if n > 0:
+                buffer += "set {} base defense +{}\n".format(unit, n)
+            n = random.randint(-1, 3)
+            if n > 0:
+                buffer += "set {} base hp +{}\n".format(unit, n)
+    if magic_unit_speed_up:
+        for unit in MagicUnits:
+            n = random.randint(0, 3)
+            if n > 0:
+                buffer += "set {} base speed +{}\n".format(unit, n)
+    if thief_str_up:
+        for unit in ThiefUnits:
+            n = random.randint(0, 5)
+            if n > 0:
+                buffer += "set {} base strength +{}\n".format(unit, n)
+    if mag_is_everything:
+        for unit in PhysicalUnits:
+            n = random.randint(-6, 3)
+            if n > 0:
+                buffer += "set {} base magic +{}\n".format(unit, n)
+    return buffer
 
 
 def growth_randomization(growth_randomizer, growth_variance, balanced_growths, enid_magic):
@@ -132,7 +193,7 @@ def growth_randomization(growth_randomizer, growth_variance, balanced_growths, e
     for index, unit in enumerate(UnitToOffset):
         bias = 0
         for stat in stats:
-            if growth_randomizer == 0 or growth_randomizer == 1:  # wtf is 1 supposed to be again
+            if growth_randomizer == 0:  # wtf is 1 supposed to be again
                 v = growth_variance
                 if stat == "defense" or stat == "magic":
                     v = (v + 1) // 2  # round up for fun
@@ -140,24 +201,73 @@ def growth_randomization(growth_randomizer, growth_variance, balanced_growths, e
                     random_bonus = balanced_linear_variance(v, v, 5 + bias)
                 else:
                     random_bonus = balanced_linear_variance(v, v)
-                if stat == "magic" and unit.lower() == "enid" and enid_magic:
+                if enid_magic and stat == "magic" and unit.lower() == "enid":
                     random_bonus = max(0, random_bonus)
                 bias += random_bonus / 20
                 if random_bonus != 0:
                     buffer += "set {} growth {} {}{:.0f}\n".format(unit, stat, sign_str(random_bonus), abs(random_bonus))
-            elif growth_randomizer == 2:
-                if stat == "defense":
-                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, 20))
-                elif stat == "magic":
-                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, 30))
+            elif growth_randomizer == 1:
+                v = growth_variance
+                if stat == "defense" or stat == "magic":
+                    v = (v + 1) // 2  # round up for fun
+                if unit in ThiefUnits:
+                    value = fit(ThiefGrowth[stat] // 2 + balanced_linear_variance(v, v), 0, 60)
+                elif unit in LightFootUnits:
+                    value = fit(LightUnitGrowth[stat] // 2 + balanced_linear_variance(v, v), 0, 60)
+                elif unit in MagicUnits:
+                    value = fit(MagicUnitGrowth[stat] // 2 + balanced_linear_variance(v, v), 0, 60)
                 else:
-                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, 50))
+                    value = fit(HeavyUnitGrowth[stat] // 2 + balanced_linear_variance(v, v), 0, 60)
+                if enid_magic and stat == "magic" and unit.lower() == "enid":
+                    value = fit(value, 20, 60)
+                buffer += "set {} growth {} {:.0f}\n".format(unit, stat, value)
+            elif growth_randomizer == 2:
+                if enid_magic and stat == "magic" and unit.lower() == "enid":
+                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, fit(random.randint(0, MagicUnitGrowth[stat]), 20, MagicUnitGrowth[stat]))
+                elif unit in ThiefUnits:
+                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, ThiefGrowth[stat]))
+                elif unit in LightFootUnits:
+                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, LightUnitGrowth[stat]))
+                elif unit in MagicUnits:
+                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, MagicUnitGrowth[stat]))
+                else:
+                    buffer += "set {} growth {} {:.0f}\n".format(unit, stat, random.randint(0, HeavyUnitGrowth[stat]))
     return buffer
 
 
 def growth_adjustment(growth_randomizer, foot_unit_def_up, magic_unit_bulk_up, magic_unit_speed_up,thief_str_up, mag_is_everything):
-    if growth_randomizer == 0:
-        pass
+    if growth_randomizer == 2:
+        return ""  # completely randomized, don't need
+    buffer = ""
+    if foot_unit_def_up:
+        for unit in LightFootUnits:
+            n = random.randint(-6, 12)
+            if n > 0:
+                buffer += "set {} growth defense +{}\n".format(unit, n)
+    if magic_unit_bulk_up:
+        for unit in MagicUnits:
+            n = random.randint(-6, 12)
+            if n > 0:
+                buffer += "set {} growth defense +{}\n".format(unit, n)
+            n = random.randint(-6, 12)
+            if n > 0:
+                buffer += "set {} growth hp +{}\n".format(unit, n)
+    if magic_unit_speed_up:
+        for unit in MagicUnits:
+            n = random.randint(-5, 15)
+            if n > 0:
+                buffer += "set {} growth speed +{}\n".format(unit, n)
+    if thief_str_up:
+        for unit in ThiefUnits:
+            n = random.randint(0, 30)
+            if n > 0:
+                buffer += "set {} growth strength +{}\n".format(unit, n)
+    if mag_is_everything:
+        for unit in PhysicalUnits:
+            n = random.randint(-20, 20)
+            if n > 0:
+                buffer += "set {} growth magic +{}\n".format(unit, n)
+    return buffer
 
 
 def wlv_growth_randomization(wlv_randomizer, wlv_growth_variance, wlv_growth_lower_cap, promotion_wlv):
@@ -169,12 +279,28 @@ def wlv_growth_randomization(wlv_randomizer, wlv_growth_variance, wlv_growth_low
                 if growth != 0:
                     random_bonus = balanced_linear_variance(wlv_growth_variance, wlv_growth_variance)
                     growth = fit(growth + random_bonus, wlv_growth_lower_cap, 90)
+                    if promotion_wlv and weapon in PromoGuard[unit] and PromoGuard[unit][weapon] > growth:
+                        growth = PromoGuard[unit][weapon]
                     buffer += "set {} growth {} {}\n".format(unit, weapon, abs(growth))
         elif wlv_randomizer == 1:
-            sum_wlv = sum([WeaponLevels[unit][w] for w in WeaponLevels[unit]])
-            pass
+            sum_wlv_growth = sum([WeaponLevels[unit][w][1] for w in WeaponLevels[unit]])
+            weapons = [w for w in WeaponLevels[unit] if WeaponLevels[unit][w][1] != 0]
+            growths = splitvalue(sum_wlv_growth, len(weapons))
+            for i, weapon in enumerate(weapons):
+                growth = fit(growths[i], wlv_growth_lower_cap, 90)
+                if promotion_wlv and weapon in PromoGuard[unit] and PromoGuard[unit][weapon] > growth:
+                    growth = PromoGuard[unit][weapon]
+                buffer += "set {} growth {} {}\n".format(unit, weapon, growth)
         else:
-            pass
+            weapons = [w for w in WeaponLevels[unit] if WeaponLevels[unit][w][1] != 0]
+            growths = [WeaponLevels[unit][w][1] for w in WeaponLevels[unit] if WeaponLevels[unit][w][1] != 0]
+            random.shuffle(growths)
+            for i, weapon in enumerate(weapons):
+                random_bonus = balanced_linear_variance(wlv_growth_variance, wlv_growth_variance)
+                growth = fit(growths[i] + random_bonus, wlv_growth_lower_cap, 90)
+                if promotion_wlv and weapon in PromoGuard[unit] and PromoGuard[unit][weapon] > growth:
+                    growth = PromoGuard[unit][weapon]
+                buffer += "set {} growth {} {}\n".format(unit, weapon, growth)
     return buffer
 
 
@@ -202,7 +328,7 @@ def skills_randomization(skills_editor, use_skill_capacity, skill_keep_chance,
             b = balanced_linear_variance(3, 3)
             max_capacity = fit(max_capacity + b, locked_capacity, 7)
             bonus_capacity = fit(bonus_capacity + b, 0, 10)
-        elif skills_editor == 2 or skills_editor == 3:
+        elif skills_editor == 2:
             max_capacity = 7
         legal_skills = [s for s in SkillLegality if SkillLegality[s] is True or isinstance(SkillLegality[s], list) and unit in SkillLegality[s]]
         legal_skills_e = [s for s in expensive_skills if s in legal_skills]
@@ -222,7 +348,7 @@ def skills_randomization(skills_editor, use_skill_capacity, skill_keep_chance,
                 bonus_capacity -= SkillCapacity[new_skill] - 1
                 buffer += "set {} skill {}\n".format(unit, new_skill)
                 learned.append(new_skill)
-        learned_pool = legal_skills_c + legal_skills_c + legal_skills_c + legal_skills_e
+        learned_pool = legal_skills_c + legal_skills_c + legal_skills_e
         min_lv = learned_skill_min
         if learned_skills_randomizer == 1:
             num = 0
@@ -262,7 +388,7 @@ def items_randomization(weapon_damage_variance, weapon_hit_max, weapon_hit_min, 
                 buffer += "set {} cost {}{}\n".format(item, sign_str(cost), abs(cost))
             if durability != 0:
                 buffer += "set {} durability {}{}\n".format(item, sign_str(durability), abs(durability))
-    buffer += "set Treasure price {}\n".format(treasure_price)
+    buffer += "set Treasure price {}\n".format(treasure_price * 2)
     return buffer
 
 

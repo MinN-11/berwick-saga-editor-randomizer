@@ -72,27 +72,11 @@ MovementTypes = ["calvary", "lt-calvary", "flier", "knight", "armor", "infantry"
                  "war-priest", "lt-infantry", "priest", "--"]
 
 
-# japanese_original
-# UnitOffset = 0x0890E9f0
-# UnitOffset2 = 0x08DD7830
-# GrowthOffset = 0x0CB4520
-# GrowthOffset2 = 0x08E907f4
-# ClassOffset = 0x0CAE5CC
-# ClassOffset2 = 0x08E8A8A0
-# ItemOffset = 0x0CC0C04
-# ItemOffset2 = 0x08E9CE08
-
-
-# translation
-UnitOffset = 0x0891A9f0
-UnitOffset2 = 0x08DE3830
-GrowthOffset = 0x0CAAD20
-GrowthOffset2 = 0x08EA7FF4
-ClassOffset = 0x0CA4DCC
-ClassOffset2 = 0x08EA20A0
-ItemOffset = 0x0CB7404
-ItemOffset2 = 0x08EB46D8
-
+# first is japanese original, second is translation patch
+UnitOffsets = (0x0890E9f0, 0x08DD7830), (0x0891A9f0, 0x08DE3830)
+GrowthOffsets = (0x0CB4520, 0x08E907f4), (0x0CAAD20, 0x08EA7FF4)
+ClassOffsets = (0x0CAE5CC, 0x08E8A8A0), (0x0CA4DCC, 0x08EA20A0)
+ItemOffsets = (0x0CC0C04, 0x08E9CE08), (0x0CB7404, 0x08EB46D8)
 
 UnitToIndex = {}
 IndexToUnit = {}
@@ -102,7 +86,7 @@ IndexToClass = {}
 ItemToIndex = {}
 IndexToItem = {}
 
-with open('characters.csv', newline='') as file:
+with open('data/characters.csv', newline='') as file:
     reader = csv.reader(file)
     for chara, index, offset in reader:
         index = eval(index)
@@ -110,14 +94,14 @@ with open('characters.csv', newline='') as file:
         IndexToUnit[index] = chara.lower()
         UnitToOffset[chara.lower()] = eval(offset)
 
-with open('classes.csv', newline='') as file:
+with open('data/classes.csv', newline='') as file:
     reader = csv.reader(file)
     for cl, index in reader:
         index = eval(index)
         ClassToIndex[cl.lower()] = index
         IndexToClass[index] = cl.lower()
 
-with open('items.csv', newline='') as file:
+with open('data/items.csv', newline='') as file:
     reader = csv.reader(file)
     for item, index in reader:
         index = eval(index)

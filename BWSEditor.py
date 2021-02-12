@@ -87,6 +87,10 @@ def parse_script(buffer, script):
                         set_growth(buffer, target, "bracket", try_eval(commands[3]))
                     elif commands[2] == "learned":
                         set_learned(buffer, target, try_eval(commands[3]), commands[4], try_eval(commands[5]))
+                    elif commands[2] == "mainhand":
+                        set_base(buffer, target, "mainhand", try_eval(commands[3]))
+                    elif commands[2] == "offhand":
+                        set_base(buffer, target, "offhand", try_eval(commands[3]))
                     else:
                         raise UnknownCommandError
                 elif commands[0] == "unset":
@@ -97,7 +101,11 @@ def parse_script(buffer, script):
                     elif commands[2] == "bag":
                         set_bag_item(buffer, target, try_eval(commands[3]), 0, 0, False, False)
                     elif commands[2] == "learned":
-                        set_learned(buffer, target, try_eval(commands[3]), 255, 0)
+                        set_learned(buffer, target, try_eval(commands[3]), 255, (0, 0))
+                    elif commands[2] == "mainhand":
+                        set_base(buffer, target, "mainhand", 0)
+                    elif commands[2] == "offhand":
+                        set_base(buffer, target, "offhand", 0)
                     else:
                         raise UnknownCommandError
                 else:
@@ -173,6 +181,10 @@ def main():
         print("python3 BWSEditor.py DATA3.DAT OUTPUT YOUR_SCRIPT")
     if len(sys.argv) < 4:
         quit()
+    if "-jp" in sys.argv:
+        SetLanguageUsed(0)
+    elif "-en" in sys.argv:
+        SetLanguageUsed(1)
     _, data, output, script = sys.argv[:4]
 
     with open(data, "rb") as data_file:

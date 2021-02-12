@@ -83,7 +83,7 @@ def main():
     skill_keep_chance = tk.StringVar(value="0")
     weapon_damage_variance = tk.StringVar(value="1")
     weapon_hit_max = tk.StringVar(value="1")
-    weapon_hit_min = tk.StringVar(value="3")
+    weapon_hit_min = tk.StringVar(value="1")
     weapon_cost_variance = tk.StringVar(value="500")
     weapon_durability_variance = tk.StringVar(value="1")
     enemy_variance = tk.StringVar(value="1")
@@ -109,8 +109,8 @@ def main():
     tk.Label(player_frame, text="For Player Characters, Randomize:", font=text_font).pack(anchor=tk.W)
     tk.Checkbutton(player_frame, text="Bases", font=text_font, variable=randomize_bases).pack(anchor=tk.W, padx=20)
     tk.Checkbutton(player_frame, text="Growths", font=text_font, variable=randomize_growths).pack(anchor=tk.W, padx=20)
-    tk.Checkbutton(player_frame, text="Wlv Bases", font=text_font, variable=randomize_wlv_bases).pack(anchor=tk.W, padx=20)
-    tk.Checkbutton(player_frame, text="Wlv Growths", font=text_font, variable=randomize_wlv_growths).pack(anchor=tk.W, padx=20)
+    tk.Checkbutton(player_frame, text="Weapon Level Bases", font=text_font, variable=randomize_wlv_bases).pack(anchor=tk.W, padx=20)
+    tk.Checkbutton(player_frame, text="Weapon Level Growths", font=text_font, variable=randomize_wlv_growths).pack(anchor=tk.W, padx=20)
     tk.Checkbutton(player_frame, text="Skills", font=text_font, variable=randomize_skills).pack(anchor=tk.W, padx=20)
     tk.Label(player_frame, text="Randomize Characters Based On:", font=text_font).pack(anchor=tk.W)
     tk.Radiobutton(player_frame, text="Base Stats", font=text_font, variable=stat_randomizer, value=0).pack(anchor=tk.W, padx=20)
@@ -146,7 +146,7 @@ def main():
     tk.Label(growth_frame_f2, text="Max Decrease:", font=text_font).pack(side=tk.LEFT)
     tk.Entry(growth_frame_f2, textvariable=stat_min, width=11).pack(side=tk.LEFT)
 
-    tk.Checkbutton(growth_frame, text="Try to Balance Units", font=text_font, variable=balanced_bases).pack(anchor=tk.W, padx=10)
+    tk.Checkbutton(growth_frame, text="Try to Balance Base Stats", font=text_font, variable=balanced_bases).pack(anchor=tk.W, padx=10)
     tk.Checkbutton(growth_frame, text="Preserve Sherpa's Bulk", font=text_font, variable=sherpa_bases).pack(anchor=tk.W, padx=10)
 
     tk.Label(growth_frame, text="Growth Randomization based On:", font=text_font).pack(anchor=tk.W)
@@ -206,8 +206,7 @@ def main():
     tk.Label(skills_frame, text="How many skills?", font=text_font).pack(anchor=tk.W)
     tk.Radiobutton(skills_frame, text="Same as Original", font=text_font, variable=skills_randomizer, value=0).pack(anchor=tk.W, padx=20)
     tk.Radiobutton(skills_frame, text="Randomized", font=text_font, variable=skills_randomizer, value=1).pack(anchor=tk.W, padx=20)
-    tk.Radiobutton(skills_frame, text="Fill Capacity", font=text_font, variable=skills_randomizer, value=2).pack(anchor=tk.W, padx=20)
-    tk.Radiobutton(skills_frame, text="Fill Everything", font=text_font, variable=skills_randomizer, value=3).pack(anchor=tk.W, padx=20)
+    tk.Radiobutton(skills_frame, text="Fill Everything", font=text_font, variable=skills_randomizer, value=2).pack(anchor=tk.W, padx=20)
     tk.Checkbutton(skills_frame, text="Use Skill Capacity System", font=text_font, variable=use_skill_capacity).pack(anchor=tk.W, padx=10)
 
     skills_frame_f5 = tk.Frame(skills_frame)
@@ -296,7 +295,8 @@ def main():
 
     helper_frame_f3 = tk.Frame(helper_frame)
     helper_frame_f3.pack(anchor=tk.W, padx=10)
-    tk.Checkbutton(helper_frame_f3, text="4 Move Priests", font=text_font, variable=four_move_priests).pack(side=tk.LEFT)
+    tk.Label(helper_frame_f3, text="4 Move", font=text_font).pack(side=tk.LEFT, padx=5)
+    tk.Checkbutton(helper_frame_f3, text="Priests", font=text_font, variable=four_move_priests).pack(side=tk.LEFT)
     tk.Checkbutton(helper_frame_f3, text="Marcel", font=text_font, variable=four_move_marcel).pack(side=tk.LEFT)
     tk.Checkbutton(helper_frame_f3, text="Derrick", font=text_font, variable=four_move_derrick).pack(side=tk.LEFT)
 
@@ -310,7 +310,7 @@ def main():
     tk.Checkbutton(helper_frame_f2, text="Increase Enemy Stats by:", font=text_font, variable=enemy_stats_patch).pack(side=tk.LEFT)
     es = tk.Entry(helper_frame_f2, textvariable=enemy_stat_buff, width=6)
     es.pack(side=tk.LEFT)
-    tk.Checkbutton(helper_frame, text="Prevent Softlock", font=text_font, variable=anti_softlock_patch).pack(anchor=tk.W, padx=10)
+    tk.Checkbutton(helper_frame, text="Vulneraries on Guest Units", font=text_font, variable=anti_softlock_patch).pack(anchor=tk.W, padx=10)
     tk.Checkbutton(helper_frame, text="Robust+ on All Players", font=text_font, variable=robust_patch).pack(anchor=tk.W, padx=10)
     # tk.Checkbutton(helper_frame, text="Give Everyone Pursuit", font=text_font, variable=robust_patch).pack(anchor=tk.W, padx=10)
 
@@ -319,17 +319,17 @@ def main():
 
     def generate():
         buffer = ""
-        include_file(exotic_weapon_buff.get(), nerf_ballistae.get(), nerf_lance_knights.get(), four_move_priests.get(), four_move_marcel.get(), four_move_derrick.get(),
+        buffer += include_file(exotic_weapon_buff.get(), nerf_ballistae.get(), nerf_lance_knights.get(), four_move_priests.get(), four_move_marcel.get(), four_move_derrick.get(),
                      hard_mode.get(), lunatic_mode.get(), enemy_stats_patch.get(), int(enemy_stat_buff.get()), anti_softlock_patch.get(), robust_patch.get())
         buffer += base_randomization(randomize_bases.get(), randomize_wlv_bases.get(), stat_randomizer.get(), level_randomizer.get(), int(level_variance.get()),
                            retrofit_stats.get(), int(stat_max.get()), int(stat_min.get()), balanced_bases.get(), sherpa_bases.get(), wlv_randomizer.get(), int(wlv_variance.get()), buff_wlv.get())
-        base_adjustment(foot_unit_def_up.get(), magic_unit_bulk_up.get(), magic_unit_speed_up.get(), thief_str_up.get(), mag_is_everything.get())
-
+        if randomize_bases.get():
+            buffer += base_adjustment(foot_unit_def_up.get(), magic_unit_bulk_up.get(), magic_unit_speed_up.get(), thief_str_up.get(), mag_is_everything.get())
         if zero_growths.get():
             buffer += zero_percent_growth()
         elif randomize_growths.get():
             buffer += growth_randomization(growth_randomizer.get(), int(growth_variance.get()), balanced_growths.get(), enid_magic.get())
-            growth_adjustment(growth_randomizer.get(), foot_unit_def_up.get(), magic_unit_bulk_up.get(), magic_unit_speed_up.get(), thief_str_up.get(), mag_is_everything.get())
+            buffer += growth_adjustment(growth_randomizer.get(), foot_unit_def_up.get(), magic_unit_bulk_up.get(), magic_unit_speed_up.get(), thief_str_up.get(), mag_is_everything.get())
         if zero_wlvl_growths.get():
             buffer += zero_weapon_rank_growth()
         elif randomize_wlv_growths.get():
@@ -356,6 +356,20 @@ def main():
         new_window.mainloop()
     randomize_button = tk.Button(row_two, text="Randomize!", font=ui_font, command=generate)
     randomize_button.pack()
+
+    def unset_randomizers():
+        randomize_bases.set(False)
+        randomize_growths.set(False)
+        randomize_wlv_bases.set(False)
+        randomize_wlv_growths.set(False)
+        randomize_skills.set(False)
+        randomize_items.set(False)
+        randomize_enemy_classes.set(False)
+        level_randomizer.set(0)
+        bracketing_randomizer.set(0)
+
+    dont_randomize_button = tk.Button(player_frame, text="Unset All Randomizers", font=ui_font, command=unset_randomizers)
+    dont_randomize_button.pack()
 
     window.lift()
     window.attributes('-topmost', True)
