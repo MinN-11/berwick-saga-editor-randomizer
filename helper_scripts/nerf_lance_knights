@@ -1,0 +1,13 @@
+set LanceKnight_R base defense -2
+set LanceKnight_R base strength -2
+set LanceKnight base defense -2
+set LanceKnight base strength -2
+
+set BlackRider_R base defense -2
+set BlackRider_R base strength -2
+set BlackRider base defense -2
+set BlackRider base strength -2
+
+set Oxtongue stat might 1
+set IronLance stat might 3
+set Xyston stat might 3
