@@ -1,13 +1,15 @@
 # Berwick Saga Editor & Randomizer
 
-## How to Patch a Berwick Saga Rom:
+## How to Patch a Berwick Saga Rom with Command Line:
 
-1. Mount or unzip a translated Berwick Saga rom, extract the files, DATA3.DAT is what we are editing here.
+Run ```python3 BWSISOEditor.py BerwickSagaRom.iso PatchedRom.iso YourScript.txt [-jp] [-en]``` on your terminal.
 
-2. Run ```python3 BWSEditor.py DATA3.DAT OUTPUT.DAT YOUR_SCRIPT.txt``` on your terminal.
+By default we use Aethin's english translation, you can specify ```-jp``` to modify the japanese rom.
 
-3. Replace the original DATA3.DAT with the output
+## How to Patch a Berwick Saga Rom with the GUI Editor:
+Run  ```python3 EditorTK.py```
 
-4. Use an ISO burning software like ImgBurn to put the rom back together. For ImgBurn, the defaut settings are fine.
+## How to use the GUI Randomizer:
+Run  ```python3 RandomizerTK.py```
 
-5. Enjoy!
+After obtaining the randomized script, use the editor to patch your rom.
