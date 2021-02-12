@@ -9,7 +9,7 @@ By default we use Aethin's english translation, you can specify ```-jp``` to mod
 ## How to Patch a Berwick Saga Rom with the GUI Editor:
 Run  ```python3 EditorTK.py```
 
-## How to use the GUI Randomizer:
+## How to use the Randomizer:
 Run  ```python3 RandomizerTK.py```
 
 After obtaining the randomized script, use the editor to patch your rom.
