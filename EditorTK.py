@@ -75,7 +75,8 @@ def main():
     def SetTranslationPatch():
         SetLanguageUsed(1) if use_translation.get() else SetLanguageUsed(0)
 
-    tk.Checkbutton(main_frame, font=ui_font, text="Use Translation Patch", command=SetTranslationPatch, variable=use_translation).pack()
+    use_translation_box = tk.Checkbutton(main_frame, font=ui_font, text="Use Translation Patch", command=SetTranslationPatch, variable=use_translation)
+    use_translation_box.pack()
 
     script_box = tk.Text(main_frame, font=script_font, highlightbackground="black", highlightthickness=2)
     script_box.pack(padx=10, pady=10)
@@ -125,6 +126,7 @@ def main():
         src_btn.configure(state='disabled')
         tar_ent.configure(state='disabled')
         tar_btn.configure(state='disabled')
+        use_translation_box.configure(state='disabled')
 
     def unlock_window():
         load_btn.configure(state='normal')
@@ -135,6 +137,7 @@ def main():
         src_btn.configure(state='normal')
         tar_ent.configure(state='normal')
         tar_btn.configure(state='normal')
+        use_translation_box.configure(state='normal')
 
     window.lift()
     window.attributes('-topmost', True)

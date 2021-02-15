@@ -109,8 +109,9 @@ def base_randomization(randomize_bases, randomize_wlv_bases, stat_randomizer, le
                     random_bonus = (random_bonus + 1) // 2  # round up for fun
                 delta_stats += random_bonus
                 if autolevel + random_bonus != 0:
-                    buffer += "set {} base {} {}{:.0f}\n".format(unit, stat, sign_str(autolevel + random_bonus), abs(autolevel + random_bonus))
-                    if unit == "reese" and autolevel + random_bonus < 0:  # reese has 0 personal bases, can't really account for others
+                    if unit != "reese" or autolevel + random_bonus > 0:
+                        buffer += "set {} base {} {}{:.0f}\n".format(unit, stat, sign_str(autolevel + random_bonus), abs(autolevel + random_bonus))
+                    else:  # reese has 0 personal bases, so we change his class
                         buffer += "set Lord_R base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
                         buffer += "set Lord base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
                         buffer += "set KnightLord_R base {} -{:.0f}\n".format(stat, abs(autolevel + random_bonus))
@@ -383,7 +384,7 @@ def items_randomization(weapon_damage_variance, weapon_hit_max, weapon_hit_min, 
             if dmg != 0:
                 buffer += "set {} damage {}{}\n".format(item, sign_str(dmg), abs(dmg))
             if hit != 0:
-                buffer += "set {} accuracy {}{}\n".format(item, sign_str(hit), abs(hit))
+                buffer += "set {} accuracy {}{}\n".format(item, sign_str(hit), abs(hit) * 10)
             if cost != 0:
                 buffer += "set {} cost {}{}\n".format(item, sign_str(cost), abs(cost))
             if durability != 0:

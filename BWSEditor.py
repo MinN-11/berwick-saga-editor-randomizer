@@ -120,12 +120,8 @@ def parse_script(buffer, script):
                         set_class_skill(buffer, target, commands[3], 1)
                     elif commands[2] == "cap":
                         set_class_caps(buffer, target, commands[3], try_eval(commands[4]))
-                    elif commands[2] == "movement_type":
-                        set_class_attribute(buffer, target, "movement", commands[3])
-                    elif commands[2] == "mount_type":
-                        set_class_attribute(buffer, target, "mount", commands[3])
-                    elif commands[2] == "class_type":
-                        set_class_attribute(buffer, target, "type", commands[3])
+                    elif commands[2] == "attribute":
+                        set_class_attribute(buffer, target, commands[3], commands[4])
                     elif commands[2] == "weapon":
                         pass
                     else:

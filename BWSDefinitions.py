@@ -64,11 +64,11 @@ WeaponTypes2 = ["knife", "sword", "blade", "mace", "spear", "lance", "fork", "ax
                 "fire", "thunder", "wind", "holy", "dark", "holy1", "dark1", "--", "--",
                 "sshield", "mshield", "lshield", "--"]
 
-MountStatus = ["not_mounted", "mounted", "dismounted"]
+MountStatus = ["unmounted", "mounted", "flying"]
 
-UnitTypes = ["calvary", "infantry", "armor", "thief", "lt-infantry", "magic", "priest", "flier"]
+UnitTypes = ["cavalry", "infantry", "armor", "thief", "lt-infantry", "mage", "priest", "flier"]
 
-MovementTypes = ["calvary", "lt-calvary", "flier", "knight", "armor", "infantry", "thief", "normal", "special", "snow",
+MovementTypes = ["cavalry", "lt-cavalry", "flier", "knight", "armor", "infantry", "thief", "civilian", "special", "snow",
                  "war-priest", "lt-infantry", "priest", "--"]
 
 

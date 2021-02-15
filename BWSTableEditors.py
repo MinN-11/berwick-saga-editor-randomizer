@@ -222,9 +222,9 @@ def set_item_stat(buffer, item, stat, value):
             modify_x_bits(buffer, offset + 1, 7, 7, value, modifier)
         elif stat == "weight":
             modify_x_bits(buffer, offset + 2, 5, 6, value, modifier)
-        elif stat == "max_range":
+        elif stat == "max_range" or stat == "max-range":
             modify_x_bits(buffer, offset + 3, 5, 3, value, modifier)
-        elif stat == "min_range":
+        elif stat == "min_range" or stat == "min-range":
             modify_x_bits(buffer, offset + 4, 4, 0, value, modifier)
         elif stat == "crit" or stat == "critical":
             modify_x_bits(buffer, offset + 5, 7, 0, value, modifier)
@@ -365,14 +365,16 @@ def set_class_caps(buffer, cls, stat, value):
 
 def set_class_attribute(buffer, cls, attribute, value):
     offsets = ClassOffsets[LanguageUsed][0] + (ClassToIndex[cls] - 1) * 100, ClassOffsets[LanguageUsed][1] + (ClassToIndex[cls] - 1) * 100
-    value = MovementTypes.index(value)
     for offset in offsets:
-        if attribute == "type":
-            pass  # dunno
+        if attribute == "mount":
+            v = MountStatus.index(value)
+            write_x_bits(buffer, offset + 4, 2, 4, v)
+        elif attribute == "type":
+            v = UnitTypes.index(value)
+            write_x_bits(buffer, offset + 4, 8, 7, 1 << v)
         elif attribute == "movement":
-            write_x_bits(buffer, offset + 6, 4, 1, value)
-        elif attribute == "mount":
-            write_x_bits(buffer, offset + 3, 2, 4, value)
+            v = MovementTypes.index(value)
+            write_x_bits(buffer, offset + 6, 4, 1, v)
         else:
             raise UnknownAttributeError
 
