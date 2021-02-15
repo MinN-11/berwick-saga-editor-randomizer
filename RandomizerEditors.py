@@ -50,7 +50,7 @@ def balanced_triangular_variance(max_dec, max_inc, mode, bias=5):
         return int(random.triangular(0, max_inc + 1, fit_mid(mode, 0, max_inc)))
 
 
-def include_file(exotic_weapon_buff, nerf_ballistae, nerf_lance_knights, four_move_priests, four_move_marcel, four_move_derrick, hard_mode, lunatic_mode, enemy_stats_patch, enemy_stat_buff, vulneries_patch, robust_patch):
+def include_file(exotic_weapon_buff, nerf_ballistae, nerf_lance_knights, four_move_priests, four_move_marcel, four_move_derrick, four_move_burroughs, unlimited_owen, hard_mode, lunatic_mode, enemy_stats_patch, enemy_stat_buff, vulneries_patch, robust_patch, treasure_price):
     buffer = ""
     if exotic_weapon_buff:
         buffer += "import exotic_weapon_uses\n"
@@ -74,6 +74,12 @@ def include_file(exotic_weapon_buff, nerf_ballistae, nerf_lance_knights, four_mo
         buffer += "unset marcel skill slowstart\n"
     if four_move_derrick:
         buffer += "set derrick skill celerity\n"
+    if four_move_burroughs:
+        buffer += "set burroughs skill celerity\n"
+    if unlimited_owen:
+        buffer += "unset RazeMonkOwen skill limited\n"
+    if treasure_price != 5000:
+        buffer += "set Treasure stat price {}\n".format(treasure_price * 2)
     return buffer
 
 
@@ -90,8 +96,11 @@ def base_randomization(randomize_bases, randomize_wlv_bases, stat_randomizer, le
             level = fit(orig_level + balanced_linear_variance(level_variance, level_variance), 1, 30)
         elif level_randomizer == 2:
             level = shuffled_levels[index]
-        internal_level = level
-        if stat_randomizer == 2:
+        if stat_randomizer == 0:
+            internal_level = orig_level
+        elif stat_randomizer == 1:
+            internal_level = level
+        elif stat_randomizer == 2:
             internal_level = JoiningChapter[unit] * 22 // 15
             internal_level += fit((orig_level - internal_level - 8) * 2, 0, 20)  # gives jagens a bit more levels
         delta_stats = 0
@@ -373,23 +382,34 @@ def skills_randomization(skills_editor, use_skill_capacity, skill_keep_chance,
     return buffer
 
 
-def items_randomization(weapon_damage_variance, weapon_hit_max, weapon_hit_min, weapon_cost_variance, weapon_durability_variance, treasure_price):
+def items_randomization(weapon_damage_variance, weapon_hit_max, weapon_hit_min, weapon_cost_variance, weapon_durability_variance, weapon_level_variance, weapon_weight_variance):
     buffer = ""
     for item in ItemToIndex:
-        if ItemToIndex[item] <= WeaponEnd and "dummy" not in item:
+        if ItemToIndex[item] <= WeaponEnd and "dummy" not in item and "broken" not in item:
+            if ItemToIndex[item] in range(HealOrbsStart, OrbsEnd):
+                continue
             dmg = linear_variance(weapon_damage_variance, weapon_damage_variance)
             hit = linear_variance(weapon_hit_min, weapon_hit_max)
             cost = linear_variance(weapon_cost_variance, weapon_cost_variance)
             durability = linear_variance(weapon_durability_variance, weapon_durability_variance)
+            weight = linear_variance(weapon_weight_variance, weapon_weight_variance)
+            level = linear_variance(weapon_level_variance, weapon_level_variance)
             if dmg != 0:
-                buffer += "set {} damage {}{}\n".format(item, sign_str(dmg), abs(dmg))
+                buffer += "set {} stat might {}{}\n".format(item, sign_str(dmg), abs(dmg))
             if hit != 0:
-                buffer += "set {} accuracy {}{}\n".format(item, sign_str(hit), abs(hit) * 10)
+                buffer += "set {} stat accuracy {}{}\n".format(item, sign_str(hit), abs(hit) * 10)
             if cost != 0:
-                buffer += "set {} cost {}{}\n".format(item, sign_str(cost), abs(cost))
+                buffer += "set {} stat cost {}{}\n".format(item, sign_str(cost), abs(cost))
             if durability != 0:
-                buffer += "set {} durability {}{}\n".format(item, sign_str(durability), abs(durability))
-    buffer += "set Treasure price {}\n".format(treasure_price * 2)
+                if ItemToIndex[item] in range(OrbsStart, HealOrbsStart):
+                    buffer += "set {} stat uses {}{}\n".format(item, sign_str(durability), abs(durability) * 4)
+                else:
+                    buffer += "set {} stat durability {}{}\n".format(item, sign_str(durability), abs(durability))
+            if weight != 0:
+                buffer += "set {} stat weight {}{}\n".format(item, sign_str(weight), abs(weight))
+            if level != 0:
+                buffer += "set {} stat level {}{}\n".format(item, sign_str(level), abs(level))
+
     return buffer
 
 

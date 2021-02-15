@@ -65,7 +65,8 @@ def modify_x_bits(buffer, offset, x_bits, bit_offset, value, modifier, ma=65535,
     elif modifier == 2:
         value = int(read_x_bits(buffer, offset, x_bits, bit_offset) * value)
     value = 0 if value < 0 else (1 << x_bits) - 1 if value >= 1 << x_bits else value
-    value = max(mi, min(ma, value))
+    if modifier != 0:  # if we just set the value, no checking here, for extreme cases
+        value = max(mi, min(ma, value))
     write_x_bits(buffer, offset, x_bits, bit_offset, value)
 
 
@@ -229,9 +230,9 @@ def set_item_stat(buffer, item, stat, value):
         elif stat == "crit" or stat == "critical":
             modify_x_bits(buffer, offset + 5, 7, 0, value, modifier)
         elif stat == "uses":
-            modify_x_bits(buffer, offset + 5, 7, 7, value, modifier)
+            modify_x_bits(buffer, offset + 5, 7, 7, value, modifier, mi=1)
         elif stat == "level":
-            modify_x_bits(buffer, offset + 6, 6, 6, value, modifier)
+            modify_x_bits(buffer, offset + 6, 6, 6, value, modifier, mi=1, ma=50)
         elif stat == "price" or stat == "cost":
             modify_x_bits(buffer, offset + 8, 16, 0, value, modifier, mi=100)  # for the randomizer
         elif stat == "defense" or stat == "def":

@@ -60,11 +60,13 @@ def main():
     four_move_priests = tk.BooleanVar(value=False)
     four_move_marcel = tk.BooleanVar(value=False)
     four_move_derrick = tk.BooleanVar(value=False)
+    four_move_burroughs = tk.BooleanVar(value=False)
     hard_mode = tk.BooleanVar(value=False)
     lunatic_mode = tk.BooleanVar(value=False)
     enemy_stats_patch = tk.BooleanVar(value=False)
     anti_softlock_patch = tk.BooleanVar(value=False)
     robust_patch = tk.BooleanVar(value=False)
+    unlimited_owen = tk.BooleanVar(value=False)
 
     stat_randomizer = tk.IntVar(value=0)
     level_randomizer = tk.IntVar(value=0)
@@ -86,6 +88,8 @@ def main():
     weapon_hit_min = tk.StringVar(value="1")
     weapon_cost_variance = tk.StringVar(value="500")
     weapon_durability_variance = tk.StringVar(value="1")
+    weapon_weight_variance = tk.StringVar(value="1")
+    weapon_level_variance = tk.StringVar(value="1")
     enemy_variance = tk.StringVar(value="1")
     enemy_stat_buff = tk.StringVar(value="2")
     treasure_price = tk.StringVar(value="5000")
@@ -114,7 +118,7 @@ def main():
     tk.Checkbutton(player_frame, text="Skills", font=text_font, variable=randomize_skills).pack(anchor=tk.W, padx=20)
     tk.Label(player_frame, text="Randomize Characters Based On:", font=text_font).pack(anchor=tk.W)
     tk.Radiobutton(player_frame, text="Base Stats", font=text_font, variable=stat_randomizer, value=0).pack(anchor=tk.W, padx=20)
-    tk.Radiobutton(player_frame, text="Base Level", font=text_font, variable=stat_randomizer, value=1).pack(anchor=tk.W, padx=20)
+    tk.Radiobutton(player_frame, text="Randomized Level", font=text_font, variable=stat_randomizer, value=1).pack(anchor=tk.W, padx=20)
     tk.Radiobutton(player_frame, text="Joining Time", font=text_font, variable=stat_randomizer, value=2).pack(anchor=tk.W, padx=20)
     tk.Label(player_frame, text="Randomize Base Level:", font=text_font).pack(anchor=tk.W)
     tk.Radiobutton(player_frame, text="No", font=text_font, variable=level_randomizer, value=0).pack(anchor=tk.W, padx=20)
@@ -267,21 +271,26 @@ def main():
 
     items_frame_f6 = tk.Frame(items_frame)
     items_frame_f6.pack(anchor=tk.W, padx=10, fill=tk.X, expand=True)
-    tk.Label(items_frame_f6, text="Treasure Sells For:", font=text_font).pack(side=tk.LEFT)
-    tk.Entry(items_frame_f6, textvariable=treasure_price, width=10).pack(side=tk.RIGHT)
+    tk.Label(items_frame_f6, text="Weight Variance:", font=text_font).pack(side=tk.LEFT)
+    tk.Entry(items_frame_f6, textvariable=weapon_weight_variance, width=10).pack(side=tk.RIGHT)
 
-    tk.Checkbutton(items_frame, text="Randomize Enemy Classes", font=text_font, variable=randomize_enemy_classes).pack(anchor=tk.W)
+    items_frame_f7 = tk.Frame(items_frame)
+    items_frame_f7.pack(anchor=tk.W, padx=10, fill=tk.X, expand=True)
+    tk.Label(items_frame_f7, text="Level Variance:", font=text_font).pack(side=tk.LEFT)
+    tk.Entry(items_frame_f7, textvariable=weapon_level_variance, width=10).pack(side=tk.RIGHT)
 
-    items_frame_f4 = tk.Frame(items_frame)
-    items_frame_f4.pack(anchor=tk.W, padx=10)
-    tk.Label(items_frame_f4, text="Enemy Stat Variance:", font=text_font).pack(side=tk.LEFT)
-    tk.Entry(items_frame_f4, textvariable=enemy_variance, width=10).pack(side=tk.LEFT)
+    tk.Checkbutton(items_frame, text="Randomize Enemies", font=text_font, variable=randomize_enemy_classes).pack(anchor=tk.W)
 
-    items_frame_f5 = tk.Frame(items_frame)
-    items_frame_f5.pack(anchor=tk.W, padx=20)
-    tk.Checkbutton(items_frame_f5, text="Random Skills", font=text_font, variable=random_skills).pack(side=tk.LEFT)
-    tk.Checkbutton(items_frame_f5, text="More", font=text_font, variable=random_skills2).pack(side=tk.LEFT)
-    tk.Checkbutton(items_frame_f5, text="More", font=text_font, variable=random_skills3).pack(side=tk.LEFT)
+    items_frame_f9 = tk.Frame(items_frame)
+    items_frame_f9.pack(anchor=tk.W, padx=10)
+    tk.Label(items_frame_f9, text="Enemy Stat Variance:", font=text_font).pack(side=tk.LEFT)
+    tk.Entry(items_frame_f9, textvariable=enemy_variance, width=10).pack(side=tk.LEFT)
+
+    items_frame_f10 = tk.Frame(items_frame)
+    items_frame_f10.pack(anchor=tk.W, padx=20)
+    tk.Checkbutton(items_frame_f10, text="Random Skills", font=text_font, variable=random_skills).pack(side=tk.LEFT)
+    tk.Checkbutton(items_frame_f10, text="More", font=text_font, variable=random_skills2).pack(side=tk.LEFT)
+    tk.Checkbutton(items_frame_f10, text="More", font=text_font, variable=random_skills3).pack(side=tk.LEFT)
 
     tk.Checkbutton(items_frame, text="Random Breaker Skills", font=text_font, variable=random_breaker_skills).pack(anchor=tk.W, padx=20)
     tk.Checkbutton(items_frame, text="Random Nasty Skills", font=text_font, variable=random_nasty_skills).pack(anchor=tk.W, padx=20)
@@ -295,10 +304,15 @@ def main():
 
     helper_frame_f3 = tk.Frame(helper_frame)
     helper_frame_f3.pack(anchor=tk.W, padx=10)
-    tk.Label(helper_frame_f3, text="4 Move", font=text_font).pack(side=tk.LEFT, padx=5)
+    tk.Label(helper_frame_f3, text="Give 4 Move to:", font=text_font).pack(side=tk.LEFT, padx=5)
     tk.Checkbutton(helper_frame_f3, text="Priests", font=text_font, variable=four_move_priests).pack(side=tk.LEFT)
-    tk.Checkbutton(helper_frame_f3, text="Marcel", font=text_font, variable=four_move_marcel).pack(side=tk.LEFT)
-    tk.Checkbutton(helper_frame_f3, text="Derrick", font=text_font, variable=four_move_derrick).pack(side=tk.LEFT)
+
+    helper_frame_f4 = tk.Frame(helper_frame)
+    helper_frame_f4.pack(anchor=tk.W, padx=10)
+    tk.Checkbutton(helper_frame_f4, text="Marcel", font=text_font, variable=four_move_marcel).pack(side=tk.LEFT)
+    tk.Checkbutton(helper_frame_f4, text="Derrick", font=text_font, variable=four_move_derrick).pack(side=tk.LEFT)
+    tk.Checkbutton(helper_frame_f4, text="Burroughs", font=text_font, variable=four_move_burroughs).pack(side=tk.LEFT)
+    tk.Checkbutton(helper_frame, text="Remove Owen Limited", font=text_font, variable=unlimited_owen).pack(anchor=tk.W, padx=10)
 
     helper_frame_f1 = tk.Frame(helper_frame)
     helper_frame_f1.pack(anchor=tk.W, padx=10)
@@ -312,15 +326,19 @@ def main():
     es.pack(side=tk.LEFT)
     tk.Checkbutton(helper_frame, text="Vulneraries on Guest Units", font=text_font, variable=anti_softlock_patch).pack(anchor=tk.W, padx=10)
     tk.Checkbutton(helper_frame, text="Robust+ on All Players", font=text_font, variable=robust_patch).pack(anchor=tk.W, padx=10)
-    # tk.Checkbutton(helper_frame, text="Give Everyone Pursuit", font=text_font, variable=robust_patch).pack(anchor=tk.W, padx=10)
+
+    helper_frame_f8 = tk.Frame(helper_frame)
+    helper_frame_f8.pack(anchor=tk.W, padx=10, fill=tk.X, expand=True)
+    tk.Label(helper_frame_f8, text="Treasure Sells For:", font=text_font).pack(side=tk.LEFT)
+    tk.Entry(helper_frame_f8, textvariable=treasure_price, width=10).pack(side=tk.RIGHT)
 
     row_two = tk.Frame(main_frame)
     row_two.pack()
 
     def generate():
         buffer = ""
-        buffer += include_file(exotic_weapon_buff.get(), nerf_ballistae.get(), nerf_lance_knights.get(), four_move_priests.get(), four_move_marcel.get(), four_move_derrick.get(),
-                     hard_mode.get(), lunatic_mode.get(), enemy_stats_patch.get(), int(enemy_stat_buff.get()), anti_softlock_patch.get(), robust_patch.get())
+        buffer += include_file(exotic_weapon_buff.get(), nerf_ballistae.get(), nerf_lance_knights.get(), four_move_priests.get(), four_move_marcel.get(), four_move_derrick.get(), four_move_burroughs.get(), unlimited_owen.get(),
+                     hard_mode.get(), lunatic_mode.get(), enemy_stats_patch.get(), int(enemy_stat_buff.get()), anti_softlock_patch.get(), robust_patch.get(), int(treasure_price.get()))
         buffer += base_randomization(randomize_bases.get(), randomize_wlv_bases.get(), stat_randomizer.get(), level_randomizer.get(), int(level_variance.get()),
                            retrofit_stats.get(), int(stat_max.get()), int(stat_min.get()), balanced_bases.get(), sherpa_bases.get(), wlv_randomizer.get(), int(wlv_variance.get()), buff_wlv.get())
         if randomize_bases.get():
@@ -339,7 +357,7 @@ def main():
                                            learned_skills_randomizer.get(), int(learned_skills.get()), int(learned_skill_min.get()), int(learned_skill_max.get()))
         if randomize_items.get():
             buffer += items_randomization(int(weapon_damage_variance.get()), int(weapon_hit_max.get()), int(weapon_hit_min.get()),
-                                int(weapon_cost_variance.get()), int(weapon_durability_variance.get()), int(treasure_price.get()))
+                                int(weapon_cost_variance.get()), int(weapon_durability_variance.get()), int(weapon_level_variance.get()), int(weapon_weight_variance.get()))
         if randomize_enemy_classes.get():
             buffer += enemy_class_randomization(int(enemy_variance.get()), random_skills.get(), random_skills2.get(), random_skills3.get(), random_breaker_skills.get(), random_nasty_skills.get())
         buffer += bracketing_randomization(bracketing_randomizer.get())

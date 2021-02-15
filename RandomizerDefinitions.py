@@ -519,6 +519,9 @@ RemovableSkills = {
 }
 
 WeaponEnd = 0x18D
+OrbsStart = 0x0FD
+HealOrbsStart = 0x11C
+OrbsEnd = 0x149
 
 EnemySkillSet1 = [
     "overwatch", "shieldfaire", "arrowbane", "commander", "fortune", "obfuscate", "sunder", "charisma", "acrobat", "axeguard",
