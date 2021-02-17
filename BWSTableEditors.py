@@ -51,7 +51,7 @@ def write_x_bits(buffer, offset, x_bits, bit_offset, value):
 
 
 def read_x_bits(buffer, offset, x_bits, bit_offset):
-    value = ((0xFF >> (8 - x_bits) << bit_offset) & 0xFF & buffer[offset]) >> bit_offset
+    value = ((0xFF >> (8 - x_bits if 8 - x_bits > 0 else 0) << bit_offset) & 0xFF & buffer[offset]) >> bit_offset
     if bit_offset + x_bits > 8:
         value += (buffer[offset + 1] & ((1 << bit_offset + x_bits - 8) - 1)) << (8 - bit_offset)
     return value
